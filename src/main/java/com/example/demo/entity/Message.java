@@ -29,6 +29,7 @@ public class Message {
         UserName = userName;
         this.text = text;
         this.title = title;
+        this.messageTime=LocalDateTime.now();
     }
 
     public Message() {
