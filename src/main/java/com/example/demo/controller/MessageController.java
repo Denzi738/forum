@@ -30,7 +30,7 @@ public class MessageController {
                     description = "Messages added",
                     content = @Content(schema = @Schema(implementation = Message.class),
                         mediaType = "application/json")
-            )
+            ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Message ERROR"
@@ -63,8 +63,8 @@ public class MessageController {
     @DeleteMapping("message/{id}/delete")
     @Operation(summary = "Delete message", description = "Delete message by id")
     @Parameter(name = "Id", required = true, description = "Id of message to be deleted")
-    public Message deleteMessage(@PathVariable Long id){
-        return messageService.deleteMessageById(id);
+    public void deleteMessage(@PathVariable Long id){
+        messageService.deleteMessageById(id);
     }
 
 }
