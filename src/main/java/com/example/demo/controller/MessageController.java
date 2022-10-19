@@ -1,12 +1,15 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Message;
+import com.example.demo.exceptions.GenericException;
+import com.example.demo.exceptions.MessageNotFoundException;
+import com.example.demo.exceptions.TitleDuplicateException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.data.mapping.model.AbstractPersistentProperty;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.service.MessageService;
 
@@ -42,7 +45,19 @@ public class MessageController {
     }
 
     @GetMapping("/messages/{id}")
-    @Operation(summary = "Get one message", description = "Get one message by id")
+    @Operation(summary = "Get one message", description = "Get one message by id", responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Message Found",
+                    content = @Content(schema = @Schema(implementation = Message.class),
+                            mediaType = "application/json")
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Message with this id not found",
+                    content = @Content(schema = @Schema(implementation = GenericException.class))
+            )
+    })
     public Message getMessageById(@PathVariable Long id){
         return messageService.getMessageById(id);
     }
@@ -67,4 +82,25 @@ public class MessageController {
         messageService.deleteMessageById(id);
     }
 
+
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(MessageNotFoundException.class)
+    public GenericException handleMessageNotFound(MessageNotFoundException messageNotFoundException){
+        GenericException genericException = new GenericException();
+
+        genericException.setExceptionCode("404");
+        genericException.setExceptionText(messageNotFoundException.getMessage());
+        return genericException;
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(TitleDuplicateException.class)
+    public GenericException handleMessageNotFound(TitleDuplicateException titleDuplicateException){
+        GenericException genericException = new GenericException();
+
+        genericException.setExceptionCode("401");
+        genericException.setExceptionText(titleDuplicateException.getMessage());
+        return genericException;
+    }
 }

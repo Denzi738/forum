@@ -1,11 +1,14 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Message;
+import com.example.demo.exceptions.MessageNotFoundException;
+import com.example.demo.exceptions.TitleDuplicateException;
 import org.springframework.stereotype.Service;
 import com.example.demo.repository.MessageRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -25,13 +28,23 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Message getMessageById(Long id) {
-        Message message = messageRepository.findById(id).get();
-        return message;
+        Optional<Message> message = messageRepository.findById(id);
+
+        if(message.isPresent()){
+            return message.get();
+        }else{
+            throw new MessageNotFoundException("Message with this id not found");
+        }
     }
 
     @Override
     public Message addNewMessage(Message message) {
-        return messageRepository.save(message);
+        List<Message> messages = messageRepository.findAllByTitle(message.getTitle());
+        if(messages.isEmpty()) {
+            return messageRepository.save(message);
+        }else{
+            throw new TitleDuplicateException(message.getTitle());
+        }
     }
 
     @Override

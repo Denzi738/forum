@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -13,6 +15,7 @@ public class Message {
     private Long id;
 
     @Column(name = "user_name")
+    @Schema(description = "Name of the user", example = "Tester")
     private String UserName;
 
     @Column(name = "message_time")
