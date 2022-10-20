@@ -20,14 +20,12 @@ public class MessageController {
     public MessageController(MessageService messageService) {
         this.messageService = messageService;
     }
-    //нашо конструктор
 
     @GetMapping("/messages")
     @Operation(summary = "Get all messages", description = "Get all messages from database", responses = {
-            //MASAKER
             @ApiResponse(
                     responseCode = "200",
-                    description = "Messages added",
+                    description = "Messages got",
                     content = @Content(schema = @Schema(implementation = Message.class),
                         mediaType = "application/json")
             ),
@@ -42,26 +40,75 @@ public class MessageController {
     }
 
     @GetMapping("/messages/{id}")
-    @Operation(summary = "Get one message", description = "Get one message by id")
+    @Operation(summary = "Get one message", description = "Get one message by id", responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Message got",
+                    content = @Content(schema = @Schema(implementation = Message.class),
+                            mediaType = "application/json")
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Message ERROR"
+
+            )
+    })
     public Message getMessageById(@PathVariable Long id){
         return messageService.getMessageById(id);
     }
 
     @PostMapping("/message")
-    @Operation(summary = "Add one message", description = "Add new message to database")
+    @Operation(summary = "Add one message", description = "Add new message to database", responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Message added",
+                    content = @Content(schema = @Schema(implementation = Message.class),
+                            mediaType = "application/json")
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Message ERROR"
+
+            )
+    })
     public Message addMessage(@RequestBody Message message){
         return messageService.addNewMessage(message);
     }
 
     @PutMapping("message/{id}/update")
-    @Operation(summary = "Update message", description = "Uodate message by id")
+    @Operation(summary = "Update message", description = "Uodate message by id", responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Message updated",
+                    content = @Content(schema = @Schema(implementation = Message.class),
+                            mediaType = "application/json")
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Message ERROR"
+
+            )
+    })
     public Message updateMessage(@RequestBody Message message, @PathVariable Long id){
         return messageService.updateMessage(message, id);
     }
 
-    //не фунгує ділейт нормально 
     @DeleteMapping("message/{id}/delete")
-    @Operation(summary = "Delete message", description = "Delete message by id")
+    @Operation(summary = "Delete message", description = "Delete message by id", responses = {
+            //MASAKER
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Message deleted",
+                    content = @Content(schema = @Schema(implementation = Message.class),
+                            mediaType = "application/json")
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Message ERROR"
+
+            )
+    })
+    //Повторити шо таке PARAMETER
     @Parameter(name = "Id", required = true, description = "Id of message to be deleted")
     public void deleteMessage(@PathVariable Long id){
         messageService.deleteMessageById(id);
